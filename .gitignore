@@ -1,0 +1,7 @@
+/vmtest/checkpoints/*
+/edgeConnect/checkpoints/*
+/edgeConnect/examples
+/edgeConnect/scripts
+/generative_inpainting/checkpoints
+.idea
+process.py

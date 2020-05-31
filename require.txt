@@ -1,0 +1,3 @@
+pip install tensorflow
+pip install git+https://github.com/JiahuiYu/neuralgym
+
