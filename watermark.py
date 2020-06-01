@@ -22,16 +22,12 @@ def load_image(image_path, _device, include_tensor=False):
         to_save = False
         row_image = Image.open(image_path)
         w, h = row_image.size
-        if h > 512:
-            to_save = True
-            h = int((512. * h) / w)
-            row_image = row_image.resize((512, h), Image.BICUBIC)
-        w, h = row_image.size
+        # if h > 512:
+        #     h = int((512. * h) / w)
+        #     row_image = row_image.resize((512, h), Image.BICUBIC)
+        # w, h = row_image.size
         if w % 16 != 0 or h % 16 != 0:
-            to_save = True
             row_image = row_image.crop((0, 0, (w // 16) * 16, (h // 16) * 16))
-        if to_save:
-            row_image.save(image_path)
         numpy_image = np.array(row_image)
         if len(numpy_image.shape) != 3:
             numpy_image = np.repeat(np.expand_dims(numpy_image, 2), 3, axis=2)
@@ -86,12 +82,19 @@ def vmtest(file_path,net_path):
         reconstructed_raw_motif = results[2]
         reconstructed_motif = (reconstructed_raw_motif - 1) * reconstructed_mask + 1
     reconstructed_image = reconstructed_mask * results[0] + (1 - reconstructed_mask) * sy_np
-    image_suffixes = ['reconstructed_image', 'reconstructed_motif']
+    image_suffixes = ['reconstructed_image', 'reconstructed_motif','mask']
     paths ={}
-    for idx, image in enumerate([reconstructed_image, reconstructed_motif]):
+    for idx, image in enumerate([reconstructed_image, reconstructed_motif,reconstructed_mask]):
         if image is not None and idx < len(image_suffixes):
             paths[image_suffixes[idx]] = save_numpy_image(image[0], image_suffixes[idx], file_path)
-    return paths["reconstructed_image"]
+    o_img = Image.open(file_path)
+    c_img = Image.open(paths["reconstructed_image"])
+    image = c_img.resize((o_img.size[0], o_img.size[1]), resample=Image.BICUBIC)
+    file_path = paths["reconstructed_image"]
+    f_name = file_path.split('/')[-1]
+    dir = file_path[0:len(file_path.split('/')[-1]) * -1]
+    image.save(dir+"/origin"+f_name)
+    return dir+"/origin"+f_name
 
 
 
