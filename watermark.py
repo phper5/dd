@@ -22,10 +22,11 @@ def load_image(image_path, _device, include_tensor=False):
         to_save = False
         row_image = Image.open(image_path)
         w, h = row_image.size
-        # if h > 512:
-        #     h = int((512. * h) / w)
-        #     row_image = row_image.resize((512, h), Image.BICUBIC)
-        # w, h = row_image.size
+        MAX_SIZE = 512
+        if h > MAX_SIZE:
+            h = int((MAX_SIZE * h) / w)
+            row_image = row_image.resize((MAX_SIZE, h), Image.BICUBIC)
+        w, h = row_image.size
         if w % 16 != 0 or h % 16 != 0:
             row_image = row_image.crop((0, 0, (w // 16) * 16, (h // 16) * 16))
         numpy_image = np.array(row_image)
